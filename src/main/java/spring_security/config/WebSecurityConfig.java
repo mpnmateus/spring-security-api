@@ -1,10 +1,7 @@
 package spring_security.config;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -15,31 +12,34 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
-@EnableMethodSecurity  // Substitui @EnableGlobalMethodSecurity no Spring Security 6.x
+@EnableMethodSecurity
 public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/").permitAll()  // Substitui antMatchers() por requestMatchers()
-                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/managers").hasRole("MANAGERS")
                         .requestMatchers("/users").hasAnyRole("USERS", "MANAGERS")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults()) // Usamos autenticação básica
-                .logout(logout -> logout                      // Configuração para logout
-                        .logoutUrl("/logout")                     // URL para logout
+                .formLogin(formLogin -> formLogin                      // Configuração para form-based authentication
+                        .loginPage("/login")                               // Definindo a rota da página de login
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
-                            // Define a resposta após logout
-                            response.setStatus(HttpServletResponse.SC_OK);   // Define o status da resposta HTTP como OK (200)
-                            response.sendRedirect("/login");                 // Redireciona para a página de login
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.sendRedirect("/login");
                         })
-                        .invalidateHttpSession(true)              // Invalida a sessão
-                        .deleteCookies("JSESSIONID")              // Deleta o cookie de sessão
-                        .clearAuthentication(true)                // Limpa a autenticação
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .clearAuthentication(true)
                 )
                 .sessionManagement(session -> session
                         .sessionFixation().newSession()
@@ -65,6 +65,6 @@ public class WebSecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();  // Utiliza {noop} para senha sem criptografia
+        return NoOpPasswordEncoder.getInstance();
     }
 }

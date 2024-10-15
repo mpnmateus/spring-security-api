@@ -1,5 +1,6 @@
 package spring_security.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,10 +31,18 @@ public class WebSecurityConfig {
                 )
                 .httpBasic(Customizer.withDefaults()) // Usamos autenticação básica
                 .logout(logout -> logout                      // Configuração para logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")                    // Redireciona para a página principal após o logout
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")              // Invalida o cookie da sessão
+                        .logoutUrl("/logout")                     // URL para logout
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            // Define a resposta após logout
+                            response.setStatus(HttpServletResponse.SC_OK);   // Define o status da resposta HTTP como OK (200)
+                            response.sendRedirect("/login");                 // Redireciona para a página de login
+                        })
+                        .invalidateHttpSession(true)              // Invalida a sessão
+                        .deleteCookies("JSESSIONID")              // Deleta o cookie de sessão
+                        .clearAuthentication(true)                // Limpa a autenticação
+                )
+                .sessionManagement(session -> session
+                        .sessionFixation().newSession()
                 );
 
         return http.build();

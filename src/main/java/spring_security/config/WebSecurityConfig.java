@@ -28,7 +28,13 @@ public class WebSecurityConfig {
                         .requestMatchers("/users").hasAnyRole("USERS", "MANAGERS")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());  // Usamos autenticação básica
+                .httpBasic(Customizer.withDefaults()) // Usamos autenticação básica
+                .logout(logout -> logout                      // Configuração para logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")                    // Redireciona para a página principal após o logout
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")              // Invalida o cookie da sessão
+                );
 
         return http.build();
     }

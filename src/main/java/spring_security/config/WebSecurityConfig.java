@@ -1,7 +1,9 @@
 package spring_security.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -18,6 +20,13 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
+    @Autowired
+    private SecurityDatabaseService securityService;
+
+    @Autowired
+    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(securityService).passwordEncoder(NoOpPasswordEncoder.getInstance());
+    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -47,7 +56,7 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-
+    /*
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user1 = User.withUsername("user")
@@ -62,6 +71,8 @@ public class WebSecurityConfig {
 
         return new InMemoryUserDetailsManager(user1, user2);
     }
+
+     */
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to bottom right, #e6e6fa, #87cefa); /* Gradiente lilás para azul */
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #fff; /* Fundo branco para o formulário */
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px; /* Largura máxima do formulário */
+        }
+
+        h2 {
+            text-align: center;
+            color: #4b0082; /* Cor lilás escuro */
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4b0082; /* Cor lilás escuro */
+        }
+
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #4b0082; /* Borda lilás escuro */
+            border-radius: 5px;
+            box-sizing: border-box; /* Para incluir padding e bordas na largura total */
+        }
+
+        button {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: #4b0082; /* Cor lilás escuro */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s; /* Transição suave */
+        }
+
+        button:hover {
+            background-color: #6a0dad; /* Cor lilás mais clara ao passar o mouse */
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+            }
+
+            button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2>Login</h2>
+    <form th:action="@{/login}" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Login</button>
+    </form>
+</div>
+</body>
+</html>
